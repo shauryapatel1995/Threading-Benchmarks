@@ -4,12 +4,13 @@
 #include <unordered_map>
 #include <stdlib.h>
 #include <list>
+#include <mutex>
 typedef std::chrono::high_resolution_clock Clock;
 
 using namespace std;
 
 std::unordered_map<std::thread::id, double> thread_times;
-
+std::mutex a;
 void foo(Clock::time_point t1) {
 	//cout << "Thread started executing : " << std::this_thread::get_id() << "\n";
 	
@@ -17,10 +18,12 @@ void foo(Clock::time_point t1) {
 	int i;
 	int out = 0;
 	//Just run a loop 1000 times 
+	a.lock();
 	for(i = 0; i < 1000; i++){
 		// something
 		out += rand();
 	}
+	a.unlock();
 	printf("%d\n",out);
 	auto t2 = Clock::now();
 	//cout << "Thread finished executing : " << std::this_thread::get_id() << " " << std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count() << "\n";
