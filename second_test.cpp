@@ -4,22 +4,26 @@
 #include <unordered_map>
 #include <stdlib.h>
 #include <list>
+#include <time.h>
 typedef std::chrono::high_resolution_clock Clock;
 
 using namespace std;
 
 std::unordered_map<std::thread::id, double> thread_times;
 
-void foo(Clock::time_point t1) {
+void foo() {
+	auto t1 = Clock::now();
 	//cout << "Thread started executing : " << std::this_thread::get_id() << "\n";
 	
 	//cout << "Value of t1 is: " << t1 << "\n";
 	int i;
-	int out = 0;
+	unsigned int out = 0;
+	unsigned int a = static_cast<unsigned int>(time(NULL));
 	//Just run a loop 1000 times 
 	for(i = 0; i < 1000; i++){
 		// something
-		out += rand();
+		out += rand_r(&a);
+	
 	}
 	printf("%d\n",out);
 	auto t2 = Clock::now();
@@ -44,7 +48,7 @@ int main() {
 	cout << "ID of fifth is " << fifth.get_id() << "\n"; */
 
 	for(int i =0; i < 1000; i++){
-		threads.push_back(std::thread(foo, Clock::now()));
+		threads.push_back(std::thread(foo));
 	}
 
 	auto t2 = Clock::now();

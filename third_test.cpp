@@ -5,25 +5,28 @@
 #include <stdlib.h>
 #include <list>
 #include <mutex>
+#include <time.h>
 typedef std::chrono::high_resolution_clock Clock;
 
 using namespace std;
 
 std::unordered_map<std::thread::id, double> thread_times;
-std::mutex a;
-void foo(Clock::time_point t1) {
+std::mutex a1;
+void foo() {
 	//cout << "Thread started executing : " << std::this_thread::get_id() << "\n";
-	
+	auto t1 = Clock::now();
 	//cout << "Value of t1 is: " << t1 << "\n";
 	int i;
 	int out = 0;
+	unsigned int a = static_cast<unsigned int>(time(NULL));
 	//Just run a loop 1000 times 
-	a.lock();
+	
+	a1.lock();
 	for(i = 0; i < 1000; i++){
 		// something
-		out += rand();
+		out += rand_r(&a);
 	}
-	a.unlock();
+	a1.unlock();
 	printf("%d\n",out);
 	auto t2 = Clock::now();
 	//cout << "Thread finished executing : " << std::this_thread::get_id() << " " << std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count() << "\n";
@@ -47,7 +50,7 @@ int main() {
 	cout << "ID of fifth is " << fifth.get_id() << "\n"; */
 
 	for(int i =0; i < 1000; i++){
-		threads.push_back(std::thread(foo, Clock::now()));
+		threads.push_back(std::thread(foo));
 	}
 
 	auto t2 = Clock::now();
